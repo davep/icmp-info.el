@@ -1,6 +1,11 @@
 ;;; icmp-info.el --- ICMP information tool.
-;; Copyright 2001,2002 by Dave Pearson <davep@davep.org>
-;; $Revision: 1.3 $
+;; Copyright 2001-2017 by Dave Pearson <davep@davep.org>
+
+;; Author: Dave Pearson <davep@davep.org>
+;; Version: 1.3
+;; Keywords: convenience, quoting
+;; URL: https://github.com/davep/icmp-info.el
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; icmp-info.el is free software distributed under the terms of the GNU
 ;; General Public Licence, version 2. For details see the file COPYING.
@@ -13,7 +18,7 @@
 ;;
 ;; The latest icmp-info.el is always available from:
 ;;
-;;   <URL:http://www.davep.org/emacs/icmp-info.el>
+;;   <URL:https://github.com/davep/icmp-info.el>
 
 ;;; INSTALLATION:
 ;;
