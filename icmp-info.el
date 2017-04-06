@@ -131,7 +131,7 @@ Note that if no code is associated with RESULT the return value will be 0."
   (loop for info in (nth 3 result)
         for code = 0 then (1+ code)
         collect (icmp-make-result (icmp-type result) code info)))
-                                  
+
 (defun icmp-make-result (type code details)
   "Make an ICMP result."
   (list (if code (cons type code) type)
