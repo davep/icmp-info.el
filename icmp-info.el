@@ -30,7 +30,7 @@
 ;; Things we need:
 
 (eval-when-compile
-  (require 'cl))
+  (require 'cl-lib))
 
 ;; Constants.
 
@@ -128,9 +128,9 @@ Note that if no code is associated with RESULT the return value will be 0."
 
 (defun icmp-codes (result)
   "Return a list of ICMP codes associated with the type of RESULT."
-  (loop for info in (nth 3 result)
-        for code = 0 then (1+ code)
-        collect (icmp-make-result (icmp-type result) code info)))
+  (cl-loop for info in (nth 3 result)
+     for code = 0 then (1+ code)
+     collect (icmp-make-result (icmp-type result) code info)))
 
 (defun icmp-make-result (type code details)
   "Make an ICMP result."
@@ -152,31 +152,33 @@ Note that if no code is associated with RESULT the return value will be 0."
             (t
              nil)))))
 
+(defun icmp-lookup-symbol-1 (symbol list &optional parent)
+  "Look for SYMBOL in LIST."
+  (cl-loop for item in list
+     for count = 0 then (1+ count)
+     if (and item (eq (car item) symbol))
+     return (icmp-make-result
+             (if parent parent count)
+             (when parent count)
+             item)
+     else if (and item (cddr item) (icmp-lookup-symbol-1 symbol (cddr item) count))
+     return (icmp-lookup-symbol-1 symbol (cddr item) count)))
+
 (defun icmp-lookup-symbol (symbol)
   "Find ICMP details by looking for SYMBOL."
-  (flet ((find-symbol (symbol list &optional parent)
-           (loop for item in list
-                 for count = 0 then (1+ count)
-                 if (and item (eq (car item) symbol))
-                 return (icmp-make-result
-                         (if parent parent count)
-                         (when parent count)
-                         item)
-                 else if (and item (cddr item) (find-symbol symbol (cddr item) count))
-                 return (find-symbol symbol (cddr item) count))))
-    (find-symbol symbol icmp-types)))
+  (icmp-lookup-symbol-1 symbol icmp-types))
 
 (defun icmp-symbols ()
   "Return an assoc list of ICMP symbols.
 
 The resulting list is designed for use with `completing-read'."
   (let ((symbols (list)))
-   (loop for type in icmp-types
-         when type do (push (list (symbol-name (car type))) symbols)
-         when (cddr type)
-         do (loop for code in (cddr type)
-                  do (push (list (symbol-name (car code))) symbols)))
-   (nreverse symbols)))
+    (cl-loop for type in icmp-types
+       when type do (push (list (symbol-name (car type))) symbols)
+       when (cddr type)
+       do (loop for code in (cddr type)
+             do (push (list (symbol-name (car code))) symbols)))
+    (nreverse symbols)))
 
 ;;;###autoload
 (defun icmp-lookup (find1 find2)
@@ -212,13 +214,13 @@ The resulting list is designed for use with `completing-read'."
   (interactive)
   (with-output-to-temp-buffer "*icmp list*"
     (princ "Type  Code  Name\n----  ----  ----------------------------------------\n")
-    (loop for type in icmp-types
-          for type-code = 0 then (1+ type-code)
-          when type do (princ (format "%4d        %s\n" type-code (cadr type)))
-          when (cddr type) do (loop for code in (cddr type)
-                                    for code-num = 0 then (1+ code-num)
-                                    do (princ (format "      %4d  %s\n" code-num (cadr code))))
-          when type do (princ "\n"))))
+    (cl-loop for type in icmp-types
+       for type-code = 0 then (1+ type-code)
+       when type do (princ (format "%4d        %s\n" type-code (cadr type)))
+       when (cddr type) do (loop for code in (cddr type)
+                              for code-num = 0 then (1+ code-num)
+                              do (princ (format "      %4d  %s\n" code-num (cadr code))))
+       when type do (princ "\n"))))
 
 (provide 'icmp-info)
 
