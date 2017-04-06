@@ -171,7 +171,7 @@ The resulting list is designed for use with `completing-read'."
     (cl-loop for type in icmp-info-types
        when type do (push (list (symbol-name (car type))) symbols)
        when (cddr type)
-       do (loop for code in (cddr type)
+       do (cl-loop for code in (cddr type)
              do (push (list (symbol-name (car code))) symbols)))
     (nreverse symbols)))
 
@@ -212,7 +212,7 @@ The resulting list is designed for use with `completing-read'."
     (cl-loop for type in icmp-info-types
        for type-code = 0 then (1+ type-code)
        when type do (princ (format "%4d        %s\n" type-code (cadr type)))
-       when (cddr type) do (loop for code in (cddr type)
+       when (cddr type) do (cl-loop for code in (cddr type)
                               for code-num = 0 then (1+ code-num)
                               do (princ (format "      %4d  %s\n" code-num (cadr code))))
        when type do (princ "\n"))))
