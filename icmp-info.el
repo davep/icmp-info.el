@@ -20,16 +20,6 @@
 ;;
 ;;   <URL:https://github.com/davep/icmp-info.el>
 
-;;; INSTALLATION:
-;;
-;; o Drop icmp-info.el somwehere into your `load-path'. Try your site-lisp
-;;   directory for example (you might also want to byte-compile the file).
-;;
-;; o Add the following autoload statement to your ~/.emacs file:
-;;
-;;   (autoload 'icmp-lookup "icmp-info" "Perform an ICMP lookup" t)
-;;   (autoload 'icmp-list   "icmp-info" "List ICMP types and codes" t)
-
 ;;; Code:
 
 ;; Things we need:
@@ -97,12 +87,12 @@
                             (domain-name-reply           "Domain Name Reply")
                             (skip                        "SKIP")
                             (photuris                    "Photuris"))
-  "List of ICMP types and codes")
+  "List of ICMP types and codes.")
 
 ;; Main code.
 
 (defun icmp-info-type (result)
-  "Return the type code of an ICMP result."
+  "Return the type code of a the given ICMP RESULT."
   (if (consp (car result))
       (caar result)
     (car result)))
@@ -138,7 +128,7 @@ Note that if no code is associated with RESULT the return value will be 0."
      collect (icmp-info-make-result (icmp-info-type result) code info)))
 
 (defun icmp-info-make-result (type code details)
-  "Make an ICMP result."
+  "Make an ICMP result for TYPE, CODE and DETAILS."
   (list (if code (cons type code) type)
         (car details)
         (cadr details)
@@ -229,4 +219,4 @@ The resulting list is designed for use with `completing-read'."
 
 (provide 'icmp-info)
 
-;;; icmp-info.el ends here.
+;;; icmp-info.el ends here
